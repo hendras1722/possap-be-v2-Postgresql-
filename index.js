@@ -3,9 +3,26 @@ const app = express()
 const logger = require('morgan')
 const bodyParser = require('body-parser')
 const mainNavigation = require('./src/routes')
-// const profile = require('./routes/profile')
+const multer = require('multer')
+const path = require('path')
+const { port } = require('./src/configs')
+const cors = require('cors')
 
-app.listen(4000, () => console.log('\n This server is running'))
+// var corsOptions = {
+//     origin: 'http://192.168.1.16/',
+//     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+// }
+
+// app.get('/pos/search/', cors(corsOptions), function (req, res, next) {
+//     res.json({ msg: 'This is CORS-enabled for only example.com' })
+// })
+
+app.listen(port, () => console.log(`\n This server is running ${port}`))
+
+app.listen(80, function () {
+    console.log('CORS-enabled web server listening on port 80')
+})
+
 app.use(logger('dev'))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({
@@ -13,69 +30,3 @@ app.use(bodyParser.urlencoded({
 }))
 
 app.use('/', mainNavigation)
-
-// app.use('/profile', profile)
-
-// app.get('/', (request, response) => {
-//   const searchName = request.query.name || ''
-//   connection.query(`SELECT * FROM book WHERE name LIKE '%${searchName}%'`, (error, result) => {
-//     if (error) console.log(error)
-//     response.json(result)
-//   })
-// })
-
-// app.get('/:bookId', (request, response) => {
-//   const bookId = request.params.bookId
-//   console.log(bookId)
-
-//   connection.query('SELECT * FROM book WHERE id = ?', bookId, (error, result) => {
-//     if (error) console.log(error)
-//     response.json(result)
-//   })
-// })
-
-// app.post('/', (request, response) => {
-//   const data = {
-//     name: request.body.name,
-//     writer: request.body.writer,
-//     description: request.body.description,
-//     publisher: request.body.publisher,
-//     year: request.body.year,
-//     stock: request.body.stock,
-//     genre: request.body.genre,
-//     created_at: new Date(),
-//     updated_at: new Date()
-//   }
-//   connection.query('INSERT INTO book SET ?', data, (error, result) => {
-//     if (error) console.log(error)
-//     response.json(result)
-//   })
-// })
-
-// app.patch('/:bookId', (request, response) => {
-//   const bookId = request.params.bookId
-
-//   const data = {
-//     name: request.body.name,
-//     writer: request.body.writer,
-//     description: request.body.description,
-//     publisher: request.body.publisher,
-//     year: request.body.year,
-//     stock: request.body.stock,
-//     genre: request.body.genre,
-//     updated_at: new Date()
-//   }
-
-//   connection.query('UPDATE book SET ? WHERE id = ?', [data, bookId], (error, result) => {
-//     if (error) console.log(error)
-//     response.json(result)
-//   })
-// })
-
-// app.delete('/:bookId', (request, response) => {
-//   const bookId = request.params.bookId
-//   connection.query('DELETE FROM book WHERE id = ?', bookId, (error, result) => {
-//     if (error) console.log(error)
-//     response.json(result)
-//   })
-// })

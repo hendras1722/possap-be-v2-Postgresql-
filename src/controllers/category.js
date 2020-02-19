@@ -1,5 +1,5 @@
 const posStyle = require('../models/category')
-const myConnection = require('../helper/status')
+const myConnection = require('../helpers/status')
 
 module.exports = {
     AllCategory: async (request, response) => {

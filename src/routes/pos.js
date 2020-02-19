@@ -1,7 +1,32 @@
 const express = require('express')
 const Route = express.Router()
 const multer = require('multer')
-// const upload = multer({dest: '/uploads/'})
+const corsOptions = require('../configs')
+const cors = require('cors')
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './uploads')
+  },
+  filename: function (req, file, cb) {
+    cb(null, file.originalname)
+  }
+})
+
+const upload = multer({
+  storage: storage,
+  fileSize: 1024 * 1024,
+  fileFilter: (req, file, cb) => {
+    if (
+      !file.mimetype.includes("jpeg") &&
+      !file.mimetype.includes("jpg") &&
+      !file.mimetype.includes("png")
+    ) {
+      return cb(null, false, new Error("Only images are allowed"));
+    }
+    cb(null, true);
+  }
+});
 
 const {
   posAll,
@@ -9,21 +34,19 @@ const {
   insertData,
   updateData,
   deleteData,
-  limPages,
-  // searchData,
-  sortData,
-  test
+
 } = require('../controllers/pos')
 
+const {
+  authentication,
+  authorization
+} = require('../helpers/auth')
+
 Route
-  .get('/search/', posAll)
+  .get('/search', authentication, authorization, posAll)
   .get('/search/:posId', posDetail)
-  .get('/test', test)
-  .post('/uploads/', insertData)
-  .patch('/:posId', updateData)
+  .post('/uploads/', upload.single('image'), insertData)
+  .patch('/update/:posId', updateData)
   .delete('/remove/:posId', deleteData)
-  // .get('/search', searchData)
-  .get('/sort/:data', sortData)
-  .get('/page/:limited', limPages)
 
 module.exports = Route

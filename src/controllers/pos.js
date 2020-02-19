@@ -1,14 +1,18 @@
 const posStyle = require('../models/pos')
-const myConnection = require('../helper/status')
+const myConnection = require('../helpers/status')
+const { port } = require('../configs')
 
 module.exports = {
   posAll: async (request, response) => {
     try {
+      const limit = request.query.limit || 30
+      const activePage = request.query.page || 1
       const searchName = request.query.name || ''
-      // let order = req.query.order
-      // let sort = req.query.sort
+      const sortBy = request.query.sortBy || 'id'
+      const orderBy = request.query.orderBy || 'ASC'
 
-      const result = await posStyle.posAll(searchName)
+      const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy)
+
       myConnection.response(response, 200, result)
     } catch (error) {
       myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at posAll')
@@ -25,11 +29,10 @@ module.exports = {
   },
   insertData: async (request, response) => {
     try {
-
       const data = {
         name: request.body.name,
         description: request.body.description,
-        image: request.body.image,
+        image: `http://localhost:${port}/uploads/${request.file.filename}`,
         price: request.body.price,
         id_category: request.body.id_category,
         created_at: new Date(),
@@ -37,9 +40,9 @@ module.exports = {
       }
 
       const result = await posStyle.insertData(data)
-      myConnection.response(response, 200, result)
+      myConnection.response(response, 200, result, 'Success Uploaded')
     } catch (error) {
-      myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at insertData')
+      myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at insertData or File not recruitment')
     }
   },
   updateData: async (request, response) => {
@@ -50,7 +53,8 @@ module.exports = {
         description: request.body.description,
         image: request.body.image,
         price: request.body.price,
-        created_at: new Date(),
+        id_category: request.body.id_category,
+        // created_at: new Date(),
         updated_at: new Date()
       }
 
@@ -67,36 +71,6 @@ module.exports = {
       response.json(result)
     } catch (error) {
       console.log(error)
-    }
-  },
-  limPages: async (request, response) => {
-    try {
-      const limited = request.params.limited
-      const result = await posStyle.limPages(limited)
-      myConnection.response(response, 200, result)
-    } catch (error) {
-      myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at limPages')
-    }
-  },
-  test: async (request, response) => {
-    try {
-      const name = request.query.name;
-      console.log(request.query)
-      console.log(name);
-      const result = await posStyle.searchData(name)
-
-      myConnection.response(response, 200, result)
-    } catch (error) {
-      myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at searchData')
-    }
-  },
-  sortData: async (request, response) => {
-    try {
-      const data = request.params.data;
-      const result = await posStyle.sortData(data)
-      myConnection.response(response, 200, result)
-    } catch (error) {
-      myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at sortData')
     }
   }
 }
