@@ -4,9 +4,12 @@ const myConnection = require('../helpers/status')
 module.exports = {
     AllCategory: async (request, response) => {
         try {
+            const limit = request.query.limit || 100
+            const activePage = request.query.page || 1
             const searchName = request.query.name || ''
-            // const data = request.params.data
-            const result = await posStyle.AllCategory(searchName)
+            const sortBy = request.query.sortBy || 'id'
+            const orderBy = request.query.orderBy || 'ASC'
+            const result = await posStyle.AllCategory(limit, activePage, searchName, sortBy, orderBy)
             myConnection.response(response, 200, result)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at AllCategory')
@@ -30,7 +33,7 @@ module.exports = {
             }
 
             const result = await posStyle.InsertCategory(data)
-            myConnection.response(response, 200, result)
+            myConnection.response(response, 200, data)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at InsertCategory')
         }
@@ -45,7 +48,7 @@ module.exports = {
             }
 
             const result = await posStyle.UpdateCategory(data, posId)
-            myConnection.response(response, 200, result)
+            myConnection.response(response, 200, data)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at UpdateCategory')
         }
@@ -54,7 +57,11 @@ module.exports = {
         try {
             const posId = request.params.posId
             const result = await posStyle.DeleteCategory(posId)
-            myConnection.response(response, 200, result)
+            console.log(posId)
+            const deleteCategory = {
+                id: parseInt(posId)
+            }
+            myConnection.response(response, 200, deleteCategory)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at DeleteCategory')
         }

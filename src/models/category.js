@@ -1,12 +1,19 @@
 const connection = require('../configs/mysql')
 
 module.exports = {
-    AllCategory: (searchName) => {
+    AllCategory: (limit, activePage, searchName, sortBy, orderBy) => {
         return new Promise((resolve, reject) => {
-            connection.query(`SELECT * FROM category WHERE name LIKE '%${searchName}%'`, (error, result) => {
-                if (error) reject(new Error(error))
-                resolve(result)
-            })
+            const totalData = connection.query('SELECT count (*) FROM products')
+            const totalPages = Math.ceil(totalData / limit)
+            const firstData = ((limit * activePage) - limit)
+
+            connection.query(`SELECT * FROM category WHERE name LIKE '%${searchName}%'
+      ORDER BY ${sortBy} ${orderBy}
+      LIMIT ${firstData},${limit}`,
+                (error, result) => {
+                    if (error) reject(new Error(error))
+                    resolve(result)
+                })
         })
     },
     DetailCategory: (posId) => {

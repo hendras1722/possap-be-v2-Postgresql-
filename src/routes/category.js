@@ -6,20 +6,14 @@ const {
     DetailCategory,
     InsertCategory,
     UpdateCategory,
-    DeleteCategory,
-    limPages,
-    searchData,
-    sortData
+    DeleteCategory
 } = require('../controllers/category')
 
 Route
-    .get('/search/', AllCategory)
-    .get('/search/:posId', DetailCategory)
-    .post('/uploads/', InsertCategory)
+    .get('/', AllCategory)
+    .get('/:posId', DetailCategory)
+    .post('/', InsertCategory)
     .patch('/:posId', UpdateCategory)
-    .delete('/remove/:posId', DeleteCategory)
-    .get('/search/:name1', searchData)
-    .get('/sort/:data', sortData)
-    .get('/page/:limited', limPages)
+    .delete('/:posId', DeleteCategory)
 
 module.exports = Route

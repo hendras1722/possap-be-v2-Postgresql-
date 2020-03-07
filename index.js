@@ -4,24 +4,35 @@ const logger = require('morgan')
 const bodyParser = require('body-parser')
 const mainNavigation = require('./src/routes')
 const multer = require('multer')
-const path = require('path')
 const { port } = require('./src/configs')
 const cors = require('cors')
+// const redis = require('redis')
 
 // var corsOptions = {
-//     origin: 'http://192.168.1.16/',
+//     origin: 'http://192.168.1.6:4000/pos/search',
 //     optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 // }
 
-// app.get('/pos/search/', cors(corsOptions), function (req, res, next) {
+// app.get('/pos/search/', cors()rs, function (req, res, next) {
 //     res.json({ msg: 'This is CORS-enabled for only example.com' })
 // })
 
-app.listen(port, () => console.log(`\n This server is running ${port}`))
+app.listen(port, () => console.log(`This is server running ${port}`))
+app.use(cors('*'))
+// app.listen(80, function () {
+//     console.log('CORS-enabled web server listening on port 80')
+// })
+var whitelist = ['http://localhost:3000/', 'http://example2.com']
+var corsOptions = {
+    origin: function (origin, callback) {
+        if (whitelist.indexOf(origin) !== -1) {
+            callback(null, true)
+        } else {
+            callback(new Error('Not allowed by CORS'))
+        }
+    }
+}
 
-app.listen(80, function () {
-    console.log('CORS-enabled web server listening on port 80')
-})
 
 app.use(logger('dev'))
 app.use(bodyParser.json())
