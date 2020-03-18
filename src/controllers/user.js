@@ -38,7 +38,7 @@ module.exports = {
             const data = {
                 name: request.body.name,
                 email: request.body.email,
-                level: request.body.level,
+                Status: request.body.Status,
                 created_at: new Date(),
                 updated_at: new Date()
             }
@@ -56,7 +56,7 @@ module.exports = {
             const data = {
                 name: request.body.name,
                 email: request.body.email,
-                level: request.body.level,
+                Status: request.body.Status,
                 salt: hashPassword.salt,
                 password: hashPassword.passwordHash,
                 created_at: new Date(),

@@ -6,7 +6,7 @@ const uuid = require('uuid')
 
 module.exports = {
   posAll: async (request, response) => {
-    const limit = request.query.limit || 6
+    const limit = request.query.limit || 100
     const activePage = request.query.page || 1
     const searchName = request.query.name || ''
     const sortBy = request.query.sortBy || 'id'
@@ -54,7 +54,7 @@ module.exports = {
       const data = {
         name: request.body.name,
         description: request.body.description,
-        image: `http://localhost:${port}/uploads/${request.file.filename}`,
+        // image: `http://localhost:${port}/uploads/${request.file.filename}`,
         price: request.body.price,
         stock: request.body.stock,
         id_category: request.body.id_category,
@@ -63,6 +63,8 @@ module.exports = {
       }
 
       const result = await posStyle.insertData(data)
+      data.id = result.insertId
+      console.log(data.id)
       myConnection.response(response, 200, data, 'Success Uploaded')
     } catch (error) {
       myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at insertData or File not recruitment')
@@ -71,40 +73,29 @@ module.exports = {
   updateData: async (request, response) => {
     // console.log(request);
     // const posId = uuidv4()
-    const data = {
-      name: request.body.name,
-      description: request.body.description,
-      // image: request.body.image,
-      image: `http://localhost:4000/uploads/${request.file.filename}`,
-      price: request.body.price,
-      stock: request.body.stock,
-      id_category: request.body.id_category,
-      created_at: new Date(),
-      updated_at: new Date()
-    }
-
-    // console.log(data)
-    const posId = request.params.posId
-    const result = await posStyle.updateData(data, posId)
-    myConnection.response(response, 200, data)
     try {
-      // const id = uuidv4()
-      // const data = {
-      //   id,
-      //   name: request.body.name,
-      //   description: request.body.description,
-      //   image: request.body.image,
-      //   // image: `http://localhost:4000/uploads/${request.file.filename}`,
-      //   price: request.body.price,
-      //   stock: request.body.stock,
-      //   id_category: request.body.id_category,
-      //   created_at: new Date(),
-      //   updated_at: new Date()
-      // }
-      // // console.log(data)
-      // const posId = request.params.posId
-      // const result = await posStyle.updateData(posId, data)
-      // myConnection.response(response, 200, result)
+
+      const data = {
+        name: request.body.name,
+        description: request.body.description,
+        // image: request.body.image,
+        // image: `http://localhost:4000/uploads/${request.file.filename}`,
+        price: request.body.price,
+        stock: request.body.stock,
+        id_category: request.body.id_category,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+
+      // console.log(data)
+      const posId = request.params.posId
+      const result = await posStyle.updateData(data, posId)
+      const UpdateData = {
+        ...data,
+        id: parseInt(posId)
+      }
+	  console.log(UpdateData)
+      myConnection.response(response, 200, UpdateData)
     } catch (error) {
       myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at updateData')
     }
@@ -115,7 +106,7 @@ module.exports = {
       const result = await posStyle.deleteData(posId)
       console.log(posId)
       const deleteData = {
-        id: posId
+        id: parseInt(posId)
       }
       myConnection.response(response, 200, deleteData)
     } catch (error) {
