@@ -7,7 +7,7 @@ module.exports = {
             const totalPages = Math.ceil(totalData / limit)
             const firstData = ((limit * activePage) - limit)
 
-            connection.query(`SELECT * FROM user WHERE name LIKE '%${searchName}%'
+            connection.query(`SELECT user.*, user_level.name_level FROM USER LEFT JOIN user_level ON user.Status = user_level.id WHERE name LIKE '%${searchName}%'
       ORDER BY ${sortBy} ${orderBy}
       LIMIT ${firstData},${limit}`,
                 (error, result) => {

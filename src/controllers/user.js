@@ -83,7 +83,7 @@ module.exports = {
                 email: dataUser.email,
                 id: dataUser.id
             }, JWT_KEY, {
-                expiresIn: '1h'
+                expiresIn: '9h'
             })
 
             delete dataUser.salt

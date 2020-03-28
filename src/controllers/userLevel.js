@@ -1,92 +1,52 @@
-const posStyle = require('../models/category')
+const posStyle = require('../models/userLevel')
 const myConnection = require('../helpers/status')
 
 module.exports = {
-    AllCategory: async (request, response) => {
+    readUserLevel: async (request, response) => {
         try {
-            const limit = request.query.limit || 5
-            const activePage = request.query.page || 1
             const searchName = request.query.name || ''
-            const sortBy = request.query.sortBy || 'id'
-            const orderBy = request.query.orderBy || 'ASC'
-            const result = await posStyle.AllCategory(limit, activePage, searchName, sortBy, orderBy)
+            const result = await posStyle.readUserLevel(searchName)
             myConnection.response(response, 200, result)
         } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at AllCategory')
+            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at userlevel')
         }
     },
-    DetailCategory: async (request, response) => {
-        try {
-            const posId = request.params.posId
-            const result = await posStyle.DetailCategory(posId)
-            myConnection.response(response, 200, result)
-        } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at DetailCategory')
-        }
-    },
-    InsertCategory: async (request, response) => {
+    createUserLevel: async (request, response) => {
         try {
             const data = {
-                name: request.body.name,
+                name_level: request.body.name_level,
                 created_at: new Date(),
                 updated_at: new Date()
             }
 
-            const result = await posStyle.InsertCategory(data)
-            myConnection.response(response, 200, data)
+            const result = await posStyle.createUserLevel(data)
+            myConnection.response(response, 200, result)
         } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at InsertCategory')
+            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at userlevel')
         }
     },
-    UpdateCategory: async (request, response) => {
+    updateUserLevel: async (request, response) => {
         try {
-            const posId = request.params.posId
+            const id = request.params.posId
             const data = {
-                name: request.body.name,
-                created_at: new Date(),
+                id,
+                name_level: request.body.name_level,
                 updated_at: new Date()
             }
 
-            const result = await posStyle.UpdateCategory(data, posId)
-            myConnection.response(response, 200, data)
-        } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at UpdateCategory')
-        }
-    },
-    DeleteCategory: async (request, response) => {
-        try {
-            const posId = request.params.posId
-            const result = await posStyle.DeleteCategory(posId)
-            myConnection.response(response, 200, posId)
-        } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at DeleteCategory')
-        }
-    },
-    limPages: async (request, response) => {
-        try {
-            const limited = request.params.limited
-            const result = await posStyle.limPages(limited)
+            const result = await posStyle.updateUserLevel(data)
             myConnection.response(response, 200, result)
         } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at limPages')
+            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at userlevel')
         }
     },
-    searchData: async (request, response) => {
+    deleteUserLevel: async (request, response) => {
+        const posId = request.params.posId
+        const result = await posStyle.deleteUserLevel(posId)
+        myConnection.response(response, 200, result)
         try {
-            const name = request.params.name
-            const result = await posStyle.searchData(name)
-            myConnection.response(response, 200, result)
         } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at searchData')
-        }
-    },
-    sortData: async (request, response) => {
-        try {
-            const data = request.params.data
-            const result = await posStyle.sortData(data)
-            myConnection.response(response, 200, result)
-        } catch (error) {
-            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at sortData')
+            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at userlevel')
         }
     }
 }

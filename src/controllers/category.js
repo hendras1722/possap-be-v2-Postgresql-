@@ -3,14 +3,15 @@ const myConnection = require('../helpers/status')
 
 module.exports = {
     AllCategory: async (request, response) => {
+        const limit = request.query.limit || 100
+        const activePage = request.query.page || 1
+        const searchName = request.query.name || ''
+        const sortBy = request.query.sortBy || 'id'
+        const orderBy = request.query.orderBy || 'ASC'
+        const result = await posStyle.AllCategory(limit, activePage, searchName, sortBy, orderBy)
+        myConnection.response(response, 200, result)
         try {
-            const limit = request.query.limit || 100
-            const activePage = request.query.page || 1
-            const searchName = request.query.name || ''
-            const sortBy = request.query.sortBy || 'id'
-            const orderBy = request.query.orderBy || 'ASC'
-            const result = await posStyle.AllCategory(limit, activePage, searchName, sortBy, orderBy)
-            myConnection.response(response, 200, result)
+
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at AllCategory')
         }
@@ -25,30 +26,34 @@ module.exports = {
         }
     },
     InsertCategory: async (request, response) => {
-        try {
-            const data = {
-                name: request.body.name,
-                created_at: new Date(),
-                updated_at: new Date()
-            }
+        const {
+            name_category,
+        } = request.body
 
-            const result = await posStyle.InsertCategory(data)
-            myConnection.response(response, 200, data)
+        const data = {
+            name_category,
+            created_at: new Date(),
+            updated_at: new Date()
+        }
+
+        const result = await posStyle.InsertCategory(data)
+        myConnection.response(response, 200, result, 'Success Added')
+        try {
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at InsertCategory')
         }
     },
     UpdateCategory: async (request, response) => {
         try {
-            const posId = request.params.posId
+            const id = request.params.posId
             const data = {
-                name: request.body.name,
-                created_at: new Date(),
+                id,
+                name_category: request.body.name_category,
                 updated_at: new Date()
             }
 
-            const result = await posStyle.UpdateCategory(data, posId)
-            myConnection.response(response, 200, data)
+            const result = await posStyle.UpdateCategory(data)
+            myConnection.response(response, 200, result)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at UpdateCategory')
         }

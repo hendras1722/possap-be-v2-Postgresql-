@@ -3,11 +3,11 @@ const connection = require('../configs/mysql')
 module.exports = {
     AllCategory: (limit, activePage, searchName, sortBy, orderBy) => {
         return new Promise((resolve, reject) => {
-            const totalData = connection.query('SELECT count (*) FROM products')
+            const totalData = connection.query('SELECT count (*) FROM category')
             const totalPages = Math.ceil(totalData / limit)
             const firstData = ((limit * activePage) - limit)
 
-            connection.query(`SELECT * FROM category WHERE name LIKE '%${searchName}%'
+            connection.query(`SELECT category.* FROM category WHERE name_category LIKE '%${searchName}%'
       ORDER BY ${sortBy} ${orderBy}
       LIMIT ${firstData},${limit}`,
                 (error, result) => {
@@ -26,15 +26,18 @@ module.exports = {
     },
     InsertCategory: (data) => {
         return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO category SET ?', data, (error, result) => {
+            connection.query('INSERT INTO category SET ?', data)
+            connection.query('SELECT category.* FROM category', (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })
         })
     },
-    UpdateCategory: (data, posId) => {
+    UpdateCategory: (data) => {
+        const posId = data.id
         return new Promise((resolve, reject) => {
-            connection.query('UPDATE category SET ? WHERE id = ?', [data, posId], (error, result) => {
+            connection.query('UPDATE category SET ? WHERE id = ?', [data, posId])
+            connection.query('SELECT category.* FROM category', (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })

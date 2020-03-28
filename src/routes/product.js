@@ -2,7 +2,7 @@ const express = require('express')
 const Route = express.Router()
 const corsOptions = require('../configs')
 const cors = require('cors')
-// const upload = require('../controllers/upload')
+const upload = require('../controllers/upload')
 
 const {
   posAll,
@@ -22,10 +22,10 @@ const {
 } = require('../helpers/auth')
 
 Route
-  .get('/', posAll)
+  .get('/', authentication, authorization, posAll)
   .get('/:posId', posDetail)
-  .post('/', insertData)
-  .patch('/:posId', updateData)
+  .post('/', upload.single('image'), insertData)
+  .patch('/:posId', upload.single('image'), updateData)
   .delete('/:posId', deleteData)
 
 
