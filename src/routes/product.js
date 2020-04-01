@@ -22,7 +22,7 @@ const {
 } = require('../helpers/auth')
 
 Route
-  .get('/', authentication, authorization, posAll)
+  .get('/', posAll)
   .get('/:posId', posDetail)
   .post('/', upload.single('image'), insertData)
   .patch('/:posId', upload.single('image'), updateData)

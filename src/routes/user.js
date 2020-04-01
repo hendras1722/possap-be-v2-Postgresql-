@@ -6,7 +6,8 @@ const {
     login,
     getUser,
     DeleteUser,
-    UpdateUser
+    UpdateUser,
+    CreateUser
 
 } = require('../controllers/user')
 

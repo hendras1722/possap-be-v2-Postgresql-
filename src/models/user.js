@@ -6,8 +6,7 @@ module.exports = {
             const totalData = connection.query('SELECT count (*) FROM products')
             const totalPages = Math.ceil(totalData / limit)
             const firstData = ((limit * activePage) - limit)
-
-            connection.query(`SELECT user.*, user_level.name_level FROM USER LEFT JOIN user_level ON user.Status = user_level.id WHERE name LIKE '%${searchName}%'
+            connection.query(`SELECT user.*, user_level.name_level FROM user LEFT JOIN user_level ON user.Status = user_level.id WHERE name LIKE '%${searchName}%'
       ORDER BY ${sortBy} ${orderBy}
       LIMIT ${firstData},${limit}`,
                 (error, result) => {
@@ -18,7 +17,8 @@ module.exports = {
     },
     DeleteUser: (posId) => {
         return new Promise((resolve, reject) => {
-            connection.query('DELETE FROM user WHERE id = ?', posId, (error, result) => {
+            connection.query('DELETE FROM user WHERE id = ?', posId)
+            connection.query('SELECT user.*, user_level.name_level FROM user LEFT JOIN user_level ON user.Status = user_level.id', (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })
@@ -26,7 +26,8 @@ module.exports = {
     },
     UpdateUser: (data, posId) => {
         return new Promise((resolve, reject) => {
-            connection.query('UPDATE user SET ? WHERE id = ?', [data, posId], (error, result) => {
+            connection.query('UPDATE user SET ? WHERE id = ?', [data, posId])
+            connection.query('SELECT user.*, user_level.name_level FROM user LEFT JOIN user_level ON user.Status = user_level.id', (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })
@@ -34,7 +35,8 @@ module.exports = {
     },
     register: (data) => {
         return new Promise((resolve, reject) => {
-            connection.query('INSERT INTO user SET ?', data, (error, result) => {
+            connection.query('INSERT INTO user SET ?', data)
+            connection.query('SELECT user.*, user_level.name_level FROM user LEFT JOIN user_level ON user.Status = user_level.id', (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })

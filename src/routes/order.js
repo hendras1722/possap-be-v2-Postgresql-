@@ -1,11 +1,9 @@
 const express = require('express')
-const Route = express.Router()
+const route = express.Router()
 
-const orderController = require('../controllers/order')
+const { buy, readOrder } = require('../controllers/order')
 
-Route
-    .get('/', orderController.getAll)
-    .get('/:id_product', orderController.getId)
-    .post('/', orderController.insertOrder)
-
-module.exports = Route
+route
+    .post('/', buy)
+    .get('/', readOrder)
+module.exports = route

@@ -9,7 +9,7 @@ const myConnection = require('../helpers/status')
 module.exports = {
     getUser: async (request, response) => {
         try {
-            const limit = request.query.limit || 5
+            const limit = request.query.limit || 100
             const activePage = request.query.page || 1
             const searchName = request.query.name || ''
             const sortBy = request.query.sortBy || 'id'
@@ -24,10 +24,7 @@ module.exports = {
         try {
             const posId = request.params.posId
             const result = await userModel.DeleteUser(posId)
-            const deleteUser = {
-                id: parseInt(posId)
-            }
-            myConnection.response(response, 200, deleteUser)
+            myConnection.response(response, 200, result)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at DeleteCategory')
         }
@@ -44,7 +41,7 @@ module.exports = {
             }
 
             const result = await userModel.UpdateUser(data, posId)
-            myConnection.response(response, 200, data)
+            myConnection.response(response, 200, result)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at UpdateCategory')
         }
@@ -63,9 +60,9 @@ module.exports = {
                 updated_at: new Date()
             }
             const result = await userModel.register(data)
-            response.json(result)
+            myConnection.response(response, 200, result)
         } catch (error) {
-            console.log(error)
+            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at UpdateCategory')
         }
     },
     login: async (request, response) => {

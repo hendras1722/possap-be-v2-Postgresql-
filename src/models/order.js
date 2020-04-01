@@ -1,45 +1,67 @@
-require('dotenv').config()
-const connection = require('../configs/mysql')
-// const SQL = require('sql-template-strings');
-const sqlInsertOrder = ('INSERT INTO order_product SET ?')
-// const sqlSearch = ('SELECT * FROM order_product WHERE id_product=?', dataOrder.id_product)
-const sqlSearchProduct = ('SELECT * FROM products WHERE id = ?')
-const sqlUpdateProduct = ("UPDATE products SET stock = ? WHERE id = ?")
-
+const con = require("../configs/mysql");
 
 module.exports = {
-
-    getAll: (name, sortBy, orderBy, limit, startIndex) => {
+    buy: (idBuyer, data, a, date) => {
         return new Promise((resolve, reject) => {
-            connection.query(`SELECT product.id, product.name, product.description, product.image, category.category_name ,product.price, product.stock, product.created_at, product.updated_at FROM product LEFT JOIN category ON product.category_id = category.id WHERE product.name LIKE '%${name}%' ORDER BY ${sortBy} ${orderBy} LIMIT ${limit} OFFSET ${startIndex}`, (error, result) => {
-                if (error) reject(new Error(error))
-                resolve(result)
-            })
-        })
-    },
-
-    getId: (id_product) => {
-        return new Promise((resolve, reject) => {
-            connection.query(sqlSearchProduct, id_product, (error, result) => {
-                if (error) reject(new Error(error))
-                resolve(result)
-            })
-        })
-    },
-
-    insertOrder: (dataOrder) => {
-        return new Promise((resolve, reject) => {
-            connection.query(sqlSearchProduct, dataOrder.id_product, (error, result) => {
-                if (result.length > 0 && result[0].stock > dataOrder.stock) {
-                    connection.query(sqlUpdateProduct, [result[0].stock - dataOrder.stock, result[0].id])
-                    connection.query(sqlInsertOrder, dataOrder, (error, result) => {
-                        if (error) reject(new Error(error))
-                        resolve(result)
-                    })
-                } else {
-                    reject(new Error('Stock not amount'))
+            con.query(
+                `SELECT * FROM products WHERE id= ${data.idProduct}`,
+                (error, result) => {
+                    if (error) reject(new Error(error));
+                    else {
+                        console.log(result)
+                        var stock = result[0].stock - data.stock;
+                        var price = result[0].price * data.stock;
+                        if (stock <= 0) {
+                            resolve('error')
+                        } else {
+                            if (a === 0) {
+                                con.query(
+                                    `INSERT INTO purchase SET ?, idBuyer='${idBuyer}', totalPayment=0`,
+                                    date
+                                );
+                            }
+                            con.query(
+                                `UPDATE products SET stock = ${stock} WHERE id=${data.idProduct}`,
+                                (error, result) => {
+                                    if (error) {
+                                        reject(new Error(error));
+                                    } else {
+                                        con.query(
+                                            `INSERT INTO purchase_detail SET ?, price = ${price}, idBuyer = '${idBuyer}'`,
+                                            data,
+                                            (error, result) => {
+                                                if (error) reject(new Error(error))
+                                                else {
+                                                    con.query(
+                                                        `SELECT SUM(price) AS totalPrice FROM purchase_detail WHERE idBuyer='${idBuyer}'`,
+                                                        (error, result) => {
+                                                            console.log('jalan gak', result[0].totalPrice)
+                                                            if (error) reject(new Error(error))
+                                                            else {
+                                                                con.query(`UPDATE purchase SET totalPayment = ${parseInt(result[0].totalPrice)} WHERE idBuyer = '${idBuyer}'`, (error, result) => {
+                                                                    if (error) reject(new Error(error))
+                                                                    resolve(result)
+                                                                })
+                                                            }
+                                                        })
+                                                }
+                                            }
+                                        );
+                                    }
+                                }
+                            );
+                        }
+                    }
                 }
+            );
+        });
+    },
+    readOrder: () => {
+        return new Promise((resolve, reject) => {
+            con.query('SELECT purchase_detail.*, products.name FROM purchase_detail LEFT JOIN products ON purchase_detail.idProduct = products.id', (error, result) => {
+                if (error) reject(new Error(error))
+                resolve(result)
             })
         })
     }
-}
+};
