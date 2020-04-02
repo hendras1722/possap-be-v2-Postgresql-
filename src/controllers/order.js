@@ -43,5 +43,14 @@ module.exports = {
         } catch (error) {
             myConnection.response(response, 404, 'your request not found')
         }
+    },
+    readOrderDetail: async (request, response) => {
+        try {
+            const result = await models.readOrderDetail()
+            console.log(result)
+            myConnection.response(response, 200, result)
+        } catch (error) {
+            myConnection.response(response, 404, 'your request not found')
+        }
     }
 }

@@ -63,5 +63,14 @@ module.exports = {
                 resolve(result)
             })
         })
+    },
+
+    readOrderDetail: () => {
+        return new Promise((resolve, reject) => {
+            con.query('SELECT	purchase.* FROM purchase', (error, result) => {
+                if (error) reject(new Error(error))
+                resolve(result)
+            })
+        })
     }
 };
