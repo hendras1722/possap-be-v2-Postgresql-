@@ -1,9 +1,7 @@
-const userModel = require('../models/user')
-const helper = require('../helpers/')
-const JWT = require('jsonwebtoken')
-const {
-    JWT_KEY
-} = require('../configs')
+const userModel = require('../models/user') 
+const helper = require('../helpers/') 
+const JWT = require('jsonwebtoken') 
+const {JWT_KEY} = require('../configs')
 const myConnection = require('../helpers/status')
 
 module.exports = {
@@ -80,7 +78,7 @@ module.exports = {
                 email: dataUser.email,
                 id: dataUser.id
             }, JWT_KEY, {
-                expiresIn: '9h'
+                expiresIn: '2h'
             })
 
             delete dataUser.salt

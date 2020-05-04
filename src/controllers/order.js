@@ -52,5 +52,14 @@ module.exports = {
         } catch (error) {
             myConnection.response(response, 404, 'your request not found')
         }
+    },
+    orderDetail: async (request, response) => {
+        try {
+            const posId = request.params.posId
+            const result = await models.orderDetail(posId)
+            myConnection.response(response, 200, result)
+        } catch (error) {
+            myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at posDetail')
+        }
     }
 }

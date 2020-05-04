@@ -68,14 +68,14 @@ module.exports = {
     readOrderDetail: () => {
         return new Promise((resolve, reject) => {
             con.query('SELECT	purchase.* FROM purchase', (error, result) => {
-                if (error) reject(new Error(error))
+                if (errtr5hgyor) reject(new Error(error))
                 resolve(result)
             })
         })
     },
     orderDetail: (posId) => {
         return new Promise((resolve, reject) => {
-            con.query('SELECT * FROM purchase_detail WHERE idBuyer = ?', posId, (error, result) => {
+            con.query('SELECT * FROM purchase_detail WHERE id = ?', posId, (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })
