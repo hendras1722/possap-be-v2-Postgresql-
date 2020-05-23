@@ -75,7 +75,7 @@ module.exports = {
     },
     orderDetail: (posId) => {
         return new Promise((resolve, reject) => {
-            con.query('SELECT * FROM purchase_detail WHERE idBuyer = ?', posId, (error, result) => {
+            con.query('SELECT purchase_detail.*, products.name FROM purchase_detail LEFT JOIN products ON purchase_detail.idProduct = products.id WHERE idBuyer = ?', posId, (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })

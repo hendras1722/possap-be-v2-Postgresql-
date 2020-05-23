@@ -5,7 +5,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       const totalData = connection.query('SELECT count (*) FROM products')
       const totalPages = Math.ceil(totalData / limit)
-      const firstData = ((limit * activePage) - limit+1)
+      const firstData = ((limit * activePage) - limit)
 
       connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id  WHERE products.name LIKE '%${searchName}%' AND products.id_category LIKE '%${idCat}%'
       ORDER BY ${sortBy} ${orderBy}
