@@ -12,9 +12,9 @@ const {
   deleteData
 } = require('../controllers/product')
 
-const {
-  reduceProduct
-} = require('../controllers/order')
+// const {
+//   reduceProduct
+// } = require('../controllers/order')
 
 const {
   authentication,

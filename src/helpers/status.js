@@ -7,6 +7,20 @@ module.exports = {
 
         return response.status(result.status).json(result)
     },
+    responseImage: (response, status, data, pagination) => {
+        const result = {}
+
+        result.status = status || 200
+        result.result = data[0]
+        return response.status(result.status).json(result)
+    },
+    responseValidation: (response, status, data, pagination) => {
+        const result = {}
+
+        result.status = status || 200
+        result.result = data[0]
+        return response.status(result.status).json(result)
+    },
     customResponse: (response, status, data, pagination) => {
         const page = []
         const result = {}

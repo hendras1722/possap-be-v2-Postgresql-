@@ -1,6 +1,6 @@
 const models = require('../models/order')
 const myConnection = require('../helpers/status')
-const uuidv4 = require('uuid/v4')
+const { v4 } = require('uuid')
 
 module.exports = {
     buy: async (request, response) => {
@@ -9,8 +9,8 @@ module.exports = {
             if (buy === undefined || buy === '') return console.log('Tidak ada data')
 
             var a = 0;
-            const idBuyer = uuidv4()
-            await buy.products.map(e => {
+            const idBuyer = v4()
+            await buy.products.map(async e => {
                 const data = {
                     idProduct: e.id,
                     stock: e.qty
@@ -22,7 +22,7 @@ module.exports = {
 
                 const result = models.buy(idBuyer, data, a, date)
                 a = a + 1;
-                if (result === 'error') {
+                if (await result === 'error') {
                     myConnection.response(response, 400, 'false')
                 }
                 if (buy.products.length === a) {

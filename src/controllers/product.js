@@ -1,8 +1,6 @@
 const posStyle = require('../models/product')
 const myConnection = require('../helpers/status')
-const { port } = require('../configs')
-const uuidv4 = require('uuid/v4')
-const uuid = require('uuid')
+const schema = require('../schema/schema')
 
 module.exports = {
     posAll: async (request, response) => {
@@ -24,7 +22,6 @@ module.exports = {
 
             const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId)
 
-              console.log(result)
             myConnection.customResponse(response, 200, result, pager)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at posAll')
@@ -40,68 +37,71 @@ module.exports = {
         }
     },
     insertData: async (request, response) => {
-
         try {
-          
-           const {
-                name,
-                description,
-                price,
-                stock,
-                id_category
-            } = request.body
+            const validation = schema.productSchema.validate(request.body)
+            console.log(validation.error?.details, 'inivalidation')
+            if (validation.error) {
+                myConnection.responseValidation(response, 404, validation.error?.details)
+            } else {
+                const {
+                    name,
+                    description,
+                    price,
+                    image,
+                    stock,
+                    id_category
+                } = request.body
 
-            const data = {
-                name,
-                description,
-                image: `http://18.232.100.68/uploads/${request.file.filename}`,
-                price,
-                stock,
-                id_category
+                const data = {
+                    name,
+                    description,
+                    image,
+                    price,
+                    stock,
+                    id_category
+                }
+
+                const result = await posStyle.insertData(data)
+
+                myConnection.response(response, 200, result, 'Success Uploaded')
             }
-
-            const result = await posStyle.insertData(data)
-
-            myConnection.response(response, 200, result, 'Success Uploaded')
-            // const id = uuidv4()
-
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at insertData or File not recruitment')
         }
     },
     updateData: async (request, response) => {
 
-      const id = request.params.posId
-            const data = {
-                id,
-                name: request.body.name,
-                description: request.body.description,
-                image: `http://18.232.100.68/uploads/${request.file.filename}`,
-                price: request.body.price,
-                stock: request.body.stock,
-                id_category: request.body.id_category,
-                updated_at: new Date()
-            }
+        const id = request.params.posId
+        const data = {
+            id,
+            name: request.body.name,
+            description: request.body.description,
+            image: request.body.image,
+            price: request.body.price,
+            stock: request.body.stock,
+            id_category: request.body.id_category,
+            updated_at: new Date()
+        }
 
-            const result = await posStyle.updateData(data)
-            myConnection.response(response, 200, result)
-          try {
-      
+        const result = await posStyle.updateData(data)
+        myConnection.response(response, 200, result)
+        try {
+
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at updateData')
         }
     },
     deleteData: async (request, response) => {
-        
-            const posId = request.params.posId
-            const result = await posStyle.deleteData(posId)
-            console.log(posId)
-            const deleteData = {
-                id: parseInt(posId)
-            }
-            myConnection.response(response, 200, deleteData)
-try{       
- } catch (error) {
+
+        const posId = request.params.posId
+        const result = await posStyle.deleteData(posId)
+        console.log(posId)
+        const deleteData = {
+            id: parseInt(posId)
+        }
+        myConnection.response(response, 200, deleteData)
+        try {
+        } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at updateData')
         }
     }
