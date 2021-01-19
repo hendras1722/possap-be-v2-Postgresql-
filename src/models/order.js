@@ -6,6 +6,7 @@ module.exports = {
             con.query(
                 `SELECT * FROM products WHERE id= ${data.idProduct}`,
                 (error, result) => {
+                    // @ts-ignore
                     if (error) reject(new Error(error));
                     else {
                         console.log(result)
@@ -22,23 +23,29 @@ module.exports = {
                             }
                             con.query(
                                 `UPDATE products SET stock = ${stock} WHERE id=${data.idProduct}`,
+                                // @ts-ignore
                                 (error, result) => {
                                     if (error) {
+                                        // @ts-ignore
                                         reject(new Error(error));
                                     } else {
                                         con.query(
                                             `INSERT INTO purchase_detail SET ?, price = ${price}, idBuyer = '${idBuyer}'`,
                                             data,
+                                            // @ts-ignore
                                             (error, result) => {
+                                                // @ts-ignore
                                                 if (error) reject(new Error(error))
                                                 else {
                                                     con.query(
                                                         `SELECT SUM(price) AS totalPrice FROM purchase_detail WHERE idBuyer='${idBuyer}'`,
                                                         (error, result) => {
                                                             console.log('jalan gak', result[0].totalPrice)
+                                                            // @ts-ignore
                                                             if (error) reject(new Error(error))
                                                             else {
                                                                 con.query(`UPDATE purchase SET totalPayment = ${parseInt(result[0].totalPrice)} WHERE idBuyer = '${idBuyer}'`, (error, result) => {
+                                                                    // @ts-ignore
                                                                     if (error) reject(new Error(error))
                                                                     resolve(result)
                                                                 })
@@ -59,6 +66,7 @@ module.exports = {
     readOrder: () => {
         return new Promise((resolve, reject) => {
             con.query('SELECT purchase_detail.*, products.name FROM purchase_detail LEFT JOIN products ON purchase_detail.idProduct = products.id', (error, result) => {
+                // @ts-ignore
                 if (error) reject(new Error(error))
                 resolve(result)
             })
@@ -67,7 +75,8 @@ module.exports = {
 
     readOrderDetail: () => {
         return new Promise((resolve, reject) => {
-            con.query('SELECT	purchase.* FROM purchase', (error, result) => {
+            con.query('SELECT purchase.* FROM purchase', (error, result) => {
+                // @ts-ignore
                 if (error) reject(new Error(error))
                 resolve(result)
             })
@@ -76,6 +85,7 @@ module.exports = {
     orderDetail: (posId) => {
         return new Promise((resolve, reject) => {
             con.query('SELECT purchase_detail.*, products.name FROM purchase_detail LEFT JOIN products ON purchase_detail.idProduct = products.id WHERE idBuyer = ?', posId, (error, result) => {
+                // @ts-ignore
                 if (error) reject(new Error(error))
                 resolve(result)
             })

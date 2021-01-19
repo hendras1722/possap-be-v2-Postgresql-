@@ -1,14 +1,16 @@
 const posStyle = require('../models/product')
 const myConnection = require('../helpers/status')
 const schema = require('../schema/schema')
+const { v4 } = require('uuid')
 
 module.exports = {
     posAll: async (request, response) => {
 
         try {
             const limit = request.query.limit || 6
+            const urutkan = request.query.urutkan
             const activePage = request.query.page || 1
-            const searchName = request.query.name || ''
+            const searchName = request.query.searchName || ''
             const sortBy = request.query.sortBy || 'id'
             const orderBy = request.query.orderBy || 'ASC'
             const name_category = request.query.name_category || ''
@@ -20,7 +22,7 @@ module.exports = {
                 totalPages
             }
 
-            const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId)
+            const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId, urutkan)
 
             myConnection.customResponse(response, 200, result, pager)
         } catch (error) {
@@ -53,6 +55,7 @@ module.exports = {
                 } = request.body
 
                 const data = {
+                    id: v4(),
                     name,
                     description,
                     image,

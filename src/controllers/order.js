@@ -4,31 +4,34 @@ const { v4 } = require('uuid')
 
 module.exports = {
     buy: async (request, response) => {
+        const buy = request.body
+        console.log(buy)
+        if (buy === undefined || buy === '') return console.log('Tidak ada data')
+
+        var a = 0;
+        const idBuyer = v4()
+        await buy.products.map(async e => {
+            const data = {
+                idUser: e.idUser,
+                idProduct: e.id,
+                stock: e.qty,
+                catatan: e.catatan
+            }
+            console.log(data, a)
+            const date = {
+                date_added: new Date()
+            }
+
+            const result = models.buy(idBuyer, data, a, date)
+            a = a + 1;
+            if (await result === 'error') {
+                myConnection.response(response, 400, 'false')
+            }
+            if (buy.products.length === a) {
+                myConnection.response(response, 200, 'terima kasih telah berbelanja!')
+            }
+        })
         try {
-            const buy = request.body
-            if (buy === undefined || buy === '') return console.log('Tidak ada data')
-
-            var a = 0;
-            const idBuyer = v4()
-            await buy.products.map(async e => {
-                const data = {
-                    idProduct: e.id,
-                    stock: e.qty
-                }
-                console.log(data, a)
-                const date = {
-                    date_added: new Date()
-                }
-
-                const result = models.buy(idBuyer, data, a, date)
-                a = a + 1;
-                if (await result === 'error') {
-                    myConnection.response(response, 400, 'false')
-                }
-                if (buy.products.length === a) {
-                    myConnection.response(response, 200, 'terima kasih telah berbelanja!')
-                }
-            })
 
         } catch (error) {
             // console.log(error)

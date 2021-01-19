@@ -9,6 +9,9 @@ const storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
         console.log(file)
+        const formatFile = file.originalname.split('.')
+        const result = formatFile[formatFile.length - 1]
+        console.log(result)
         cb(null, v4().substring(0, 8) + "-" + file.originalname.replace(/\s/g, ''))
     }
 })
