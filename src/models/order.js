@@ -9,7 +9,6 @@ module.exports = {
                     // @ts-ignore
                     if (error) reject(new Error(error));
                     else {
-                        console.log(result)
                         var stock = result[0].stock - data.stock;
                         var price = result[0].price * data.stock;
                         if (stock <= 0) {

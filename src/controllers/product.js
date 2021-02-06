@@ -23,7 +23,7 @@ module.exports = {
             }
 
             const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId, urutkan)
-
+            request.headers.apimsacom
             myConnection.customResponse(response, 200, result, pager)
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at posAll')

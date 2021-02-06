@@ -2,12 +2,13 @@ const connection = require('../configs/mysql')
 
 module.exports = {
     AllCategory: (limit, activePage, searchName, sortBy, orderBy) => {
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             const totalData = connection.query('SELECT count (*) FROM category')
             const totalPages = Math.ceil(totalData / limit)
             const firstData = ((limit * activePage) - limit)
+            const ki = connection.query('SELECT * FROM category')
 
-            connection.query(`SELECT category.* FROM category WHERE name_category LIKE '%${searchName}%'
+            await connection.query(`SELECT category.* FROM category WHERE name_category LIKE '%${searchName}%'
       ORDER BY ${sortBy} ${orderBy}
       LIMIT ${firstData},${limit}`,
                 (error, result) => {

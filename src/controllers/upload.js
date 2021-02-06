@@ -21,11 +21,12 @@ const upload = multer({
         fileSize: 1024 * 1024
     },
     fileFilter: (req, file, cb) => {
+        console.log(file, cb(null, false), 'inicb')
         if (
             !file.mimetype.includes("jpeg") &&
             !file.mimetype.includes("jpg") &&
             // @ts-ignore
-            !file.mimetype.includes("png") && limits > 1024 * 1024
+            !file.mimetype.includes("png")
         ) {
             // @ts-ignore
             return cb(null, false, new Error("Only images are allowed"));

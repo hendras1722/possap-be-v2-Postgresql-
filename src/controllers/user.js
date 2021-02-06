@@ -14,8 +14,14 @@ module.exports = {
             // const searchName = request.query.name || ''
             // const sortBy = request.query.sortBy || 'id'
             // const orderBy = request.query.orderBy || 'ASC'
-            const result = await userModel.getUser(detail)
-            myConnection.responseValidation(response, 200, result)
+            console.log(detail, 'inidetail')
+            if (detail) {
+                const result = await userModel.getUser(detail)
+                myConnection.responseValidation(response, 200, result)
+            } else {
+                const result = await userModel.getUser()
+                myConnection.response(response, 200, result)
+            }
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at AllCategory')
         }
