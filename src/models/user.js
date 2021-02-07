@@ -12,7 +12,7 @@ module.exports = {
                         resolve(result)
                     })
             } else {
-                connection.query(`SELECT user.id, user.email, user.name, user.Status, user_level.name_level FROM user INNER JOIN user_level ON user.Status = user_level.id`,
+                connection.query(`SELECT user.id, user.email, user.name, user.created_at ,user.Status, user_level.name_level FROM user INNER JOIN user_level ON user.Status = user_level.id`,
                     (error, result) => {
                         // @ts-ignore
                         if (error) reject(new Error(error))

@@ -4,13 +4,18 @@ module.exports = {
   // @ts-ignore
   posAll: (limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId, urutkan) => {
     return new Promise((resolve, reject) => {
-      const totalData = connection.query('SELECT count (*) FROM products')
       // @ts-ignore
-      const totalPages = Math.ceil(totalData / limit)
       const firstData = ((limit * activePage) - limit)
       if (urutkan) {
         connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id  WHERE category.name_category LIKE '${urutkan}'
         ORDER BY ${sortBy} ${orderBy}`,
+          (error, result) => {
+            // @ts-ignore
+            if (error) reject(new Error(error))
+            resolve(result)
+          })
+      } if (limit) {
+        connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id ORDER BY ${sortBy} ${orderBy} LIMIT ${firstData}, ${limit} `,
           (error, result) => {
             // @ts-ignore
             if (error) reject(new Error(error))
@@ -75,10 +80,10 @@ module.exports = {
     })
   },
   countData: () => {
-    // @ts-ignore
     return new Promise((resolve, reject) => {
-      // @ts-ignore
-      connection.query('SELECT count(*) as totalData FROM products', (error, result) => {
+      connection.query(`SELECT count(products.id) as totalData FROM products`, (error, result) => {
+        // @ts-ignore
+        if (error) reject(new Error(error))
         resolve(result[0].totalData)
       })
     })

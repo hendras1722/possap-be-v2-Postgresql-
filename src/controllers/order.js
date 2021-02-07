@@ -64,5 +64,21 @@ module.exports = {
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at posDetail')
         }
+    },
+    SumPrice: async (request, response) => {
+        try {
+            const result = await models.SumPrice()
+            myConnection.response(response, 200, result)
+        } catch (error) {
+            myConnection.customErrorResponse(response, 400, "Gagal Get")
+        }
+    },
+    SumPriceMonth: async (request, response) => {
+        try {
+            const result = await models.SumPriceMonth()
+            myConnection.response(response, 200, result)
+        } catch (error) {
+            myConnection.customErrorResponse(response, 400, "Gagal Get")
+        }
     }
 }

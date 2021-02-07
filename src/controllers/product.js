@@ -6,25 +6,28 @@ const { v4 } = require('uuid')
 module.exports = {
     posAll: async (request, response) => {
 
-        try {
-            const limit = request.query.limit || 6
-            const urutkan = request.query.urutkan
-            const activePage = request.query.page || 1
-            const searchName = request.query.searchName || ''
-            const sortBy = request.query.sortBy || 'id'
-            const orderBy = request.query.orderBy || 'ASC'
-            const name_category = request.query.name_category || ''
-            const idCat = request.query.idCat || ''
-            const posId = request.params.posId
-            const totalData = await posStyle.countData()
+        const limit = request.query.limit
+        const urutkan = request.query.urutkan
+        const activePage = request.query.page || 1
+        const searchName = request.query.searchName || ''
+        const sortBy = request.query.sortBy || 'id'
+        const orderBy = request.query.orderBy || 'ASC'
+        const name_category = request.query.name_category || ''
+        const idCat = request.query.idCat || ''
+        const posId = request.params.posId
+
+        const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId, urutkan)
+        if (limit) {
+            let totalData = await posStyle.countData()
             const totalPages = Math.ceil((totalData / limit))
             const pager = {
                 totalPages
             }
-
-            const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId, urutkan)
-            request.headers.apimsacom
-            myConnection.customResponse(response, 200, result, pager)
+            myConnection.customResponse(response, 200, result, totalData, pager)
+        } else {
+            myConnection.response(response, 200, result)
+        }
+        try {
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at posAll')
         }
@@ -41,9 +44,8 @@ module.exports = {
     insertData: async (request, response) => {
         try {
             const validation = schema.productSchema.validate(request.body)
-            console.log(validation.error?.details, 'inivalidation')
             if (validation.error) {
-                myConnection.responseValidation(response, 404, validation.error?.details)
+                myConnection.responseValidation(response, 404, validation.error.details)
             } else {
                 const {
                     name,

@@ -15,7 +15,7 @@ module.exports = {
             }
             const validation = schema.imageSchema.validate(joi)
             if (validation.error) {
-                connection.customErrorResponse(response, 400, validation.error?.details)
+                connection.customErrorResponse(response, 400, validation.error.details)
             } else {
                 try {
                     const data = {
@@ -24,7 +24,6 @@ module.exports = {
                     }
                     // @ts-ignore
                     const post = await style.postImage(data)
-                    console.log(post.affectedRows, 'inpost')
                     if (post.affectedRows > 0) {
                         const result = await style.getImage(data.id)
                         connection.responseImage(response, 200, result, "Berhasil Upload")

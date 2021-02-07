@@ -89,5 +89,23 @@ module.exports = {
                 resolve(result)
             })
         })
+    },
+    SumPrice: (posId) => {
+        return new Promise((resolve, reject) => {
+            con.query('SELECT year(purchase.date_added) `year`, SUM(purchase.totalPayment) `Price` from purchase WHERE purchase.date_added group by `year`', posId, (error, result) => {
+                // @ts-ignore
+                if (error) reject(new Error(error))
+                resolve(result)
+            })
+        })
+    },
+    SumPriceMonth: () => {
+        return new Promise((resolve, reject) => {
+            con.query('SELECT month(purchase.date_added) `month`,year(purchase.date_added) `year`, SUM(purchase.totalPayment) `Price` from purchase group by `month`', (error, result) => {
+                // @ts-ignore
+                if (error) reject(new Error(error))
+                resolve(result)
+            })
+        })
     }
 };

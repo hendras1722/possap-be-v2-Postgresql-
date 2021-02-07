@@ -21,18 +21,26 @@ module.exports = {
         result.result = data[0]
         return response.status(result.status).json(result)
     },
-    customResponse: (response, status, data, pagination) => {
-        const page = []
+    customResponse: (response, status, data, pagination, pager) => {
+        const page = pagination
+        const array = []
+        console.log(pagination, pager)
         const result = {}
 
-        for (var pages = 1; pages <= pagination.totalPages; pages++) {
-            page[pages - 1] = pages
+        for (var pages = 1; pages <= pager.totalPages; pages++) {
+            console.log(pager.totalPages, 'inipages')
+            array[pages - 1] = pages
         }
         result.status = status || 200
         result.result = data
         result.totalPages = page
 
-        return response.status(result.status).json(result)
+        return response.status(result.status).json({
+            'status': status,
+            "totalData": pagination,
+            "pagination": array,
+            "result": data
+        })
     },
     customErrorResponse: (response, status, message) => {
         const result = {}
