@@ -9,7 +9,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "some function"
+    "build": "webpack --mode production",
+    "heroku-prebuild": "npm install --dev"
   },
   "keywords": [
     "backend,posapp"
