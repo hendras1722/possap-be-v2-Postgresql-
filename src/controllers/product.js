@@ -2,10 +2,10 @@ const posStyle = require('../models/product')
 const myConnection = require('../helpers/status')
 const schema = require('../schema/schema')
 const { v4 } = require('uuid')
+const headerAPI = require('../helpers/apimsa')
 
 module.exports = {
     posAll: async (request, response) => {
-
         const limit = request.query.limit
         const urutkan = request.query.urutkan
         const activePage = request.query.page || 1
@@ -15,7 +15,6 @@ module.exports = {
         const name_category = request.query.name_category || ''
         const idCat = request.query.idCat || ''
         const posId = request.params.posId
-
         const result = await posStyle.posAll(limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId, urutkan)
         if (limit) {
             let totalData = await posStyle.countData()
@@ -45,7 +44,7 @@ module.exports = {
         try {
             const validation = schema.productSchema.validate(request.body)
             if (validation.error) {
-                myConnection.responseValidation(response, 404, validation.error.details)
+                myConnection.responseValidation(response, 200, validation.error.details)
             } else {
                 const {
                     name,

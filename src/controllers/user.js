@@ -37,15 +37,18 @@ module.exports = {
     },
     UpdateUser: async (request, response) => {
         try {
+            const salt = helper.generateSalt(16)
             const posId = request.params.posId
+            const hashPassword = helper.setPassword(request.body.password, salt)
             const data = {
                 name: request.body.name,
                 email: request.body.email,
                 Status: request.body.Status,
+                salt: hashPassword.salt,
+                password: hashPassword.passwordHash,
                 created_at: new Date(),
                 updated_at: new Date()
             }
-
             const result = await userModel.UpdateUser(data, posId)
             myConnection.response(response, 200, result)
         } catch (error) {

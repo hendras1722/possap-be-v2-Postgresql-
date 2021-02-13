@@ -55,10 +55,9 @@ module.exports = {
 
   updateData: (data) => {
     const posId = data.id
-    // console.log([data, posId])
+    console.log(data)
     return new Promise((resolve, reject) => {
-      connection.query('UPDATE products SET ? WHERE id = ?', [data, posId])
-      connection.query('SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id ', (error, result) => {
+      connection.query('UPDATE products SET ? WHERE id = ?', [data, posId], (error, result) => {
         // @ts-ignore
         if (error) reject(new Error(error))
         resolve(result)

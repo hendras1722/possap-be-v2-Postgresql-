@@ -1,3 +1,5 @@
+const { rejects } = require('assert')
+const { resolve } = require('path')
 const connection = require('../configs/mysql')
 
 module.exports = {
@@ -33,9 +35,7 @@ module.exports = {
     },
     UpdateUser: (data, posId) => {
         return new Promise((resolve, reject) => {
-            connection.query('UPDATE user SET ? WHERE id = ?', [data, posId])
-            connection.query('SELECT user.*, user_level.name_level FROM user LEFT JOIN user_level ON user.Status = user_level.id', (error, result) => {
-                // @ts-ignore
+            connection.query('UPDATE user SET ? WHERE id = ?', [data, posId], (error, result) => {
                 if (error) reject(new Error(error))
                 resolve(result)
             })
