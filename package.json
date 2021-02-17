@@ -8,7 +8,7 @@
   "description": "Restful with express",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "nodemon index.js",
     "build": "webpack --mode production",
     "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev",
     "heroku-postbuild": "export NPM_CONFIG_PRODUCTION=true; export NODE_ENV=production;"
@@ -28,6 +28,7 @@
     "morgan": "^1.9.1",
     "multer": "^1.4.2",
     "mysql": "^2.18.1",
+    "nodemon": "^2.0.7",
     "path": "^0.12.7",
     "redis": "^3.0.2",
     "uuidv4": "^6.0.5"
