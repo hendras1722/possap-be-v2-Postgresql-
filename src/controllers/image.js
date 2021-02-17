@@ -20,7 +20,7 @@ module.exports = {
                 try {
                     const data = {
                         id: v4(),
-                        url: `http://localhost:4000/uploads/${request.file.filename}`
+                        url: `https://backend-posaap.herokuapp.com/uploads/${request.file.filename}`
                     }
                     // @ts-ignore
                     const post = await style.postImage(data)
