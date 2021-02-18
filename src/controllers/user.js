@@ -3,6 +3,7 @@ const helper = require('../helpers/')
 const JWT = require('jsonwebtoken')
 const { JWT_KEY } = require('../configs')
 const myConnection = require('../helpers/status')
+const brcypt = require('bcrypt')
 const { v4 } = require('uuid')
 
 module.exports = {
@@ -56,15 +57,16 @@ module.exports = {
         }
     },
     register: async (request, response) => {
-        const salt = helper.generateSalt(16)
-        const hashPassword = helper.setPassword(request.body.password, salt)
+        const salt = await brcypt.genSalt(10)
+        // const hashPassword = await brcypt.setPassword(request.body.password, salt)
+        const hashPassword = await brcypt.hash(request.body.password, salt)
         const data = {
             id: v4(),
             name: request.body.name,
             email: request.body.email,
             Status: request.body.Status,
-            salt: hashPassword.salt,
-            password: hashPassword.passwordHash,
+            salt: salt,
+            password: hashPassword,
             created_at: new Date(),
             updated_at: new Date()
         }
@@ -82,39 +84,35 @@ module.exports = {
             email: request.body.email
         }
 
-        console.log(data.email)
 
         const emailValid = await userModel.checkEmail(data.email)
-        // console.log(emailValid, 'inivalid')
         if (emailValid.length > 0) {
-            const dataUser = emailValid[0]
-            const hashPassword = helper.setPassword(data.password, dataUser.salt)
-
-            if (hashPassword.passwordHash === dataUser.password) {
+            // const dataUser = emailValid[0]
+            console.log(emailValid[0].password, 'inivalid')
+            const hashPassword = await brcypt.compare(request.body.password, emailValid[0].password)
+            // console.log(hashpassword)
+            if (!hashPassword) {
+                response.status(400).json({
+                    status: 400,
+                    message: 'Password Salah'
+                })
+            } else {
                 try {
                     const token = JWT.sign({
-                        id: dataUser.id
+                        id: emailValid[0].id
                     }, JWT_KEY, {
                         expiresIn: '2h'
                     })
-
-                    delete dataUser.salt
-                    delete dataUser.password
-
-                    dataUser.token = token
-
-                    response.json(dataUser)
+                    delete emailValid[0].salt
+                    delete emailValid[0].password
+                    emailValid[0].token = token
+                    response.status(201).json(emailValid[0])
                 } catch (e) {
                     response.status(400).json({
                         status: 400,
                         message: e
                     })
                 }
-            } else {
-                response.status(400).json({
-                    status: 400,
-                    message: 'Password Salah'
-                })
             }
         } else {
             response.json({
