@@ -1,6 +1,6 @@
 const { rejects } = require('assert')
 const { resolve } = require('path')
-const connection = require('../configs/mysql')
+const connection = require('../configs/pg')
 
 module.exports = {
     getUser: (detail) => {

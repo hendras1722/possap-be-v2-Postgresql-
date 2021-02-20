@@ -1,72 +1,66 @@
-const connection = require('../configs/mysql')
+const connection = require('../configs/pg')
 
 module.exports = {
-  // @ts-ignore
   posAll: (limit, activePage, searchName, sortBy, orderBy, name_category, idCat, posId, urutkan) => {
-    return new Promise((resolve, reject) => {
-      // @ts-ignore
-      const firstData = ((limit * activePage) - limit)
-      if (urutkan) {
-        connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id  WHERE category.name_category LIKE '${urutkan}'
-        ORDER BY ${sortBy} ${orderBy}`,
-          (error, result) => {
-            // @ts-ignore
-            if (error) reject(new Error(error))
-            resolve(result)
-          })
-      } if (limit) {
-        connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id ORDER BY ${sortBy} ${orderBy} LIMIT ${firstData}, ${limit} `,
-          (error, result) => {
-            // @ts-ignore
-            if (error) reject(new Error(error))
-            resolve(result)
-          })
-      } else {
-        connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id  AND products.name LIKE '%${searchName}%' AND products.id_category LIKE '%${idCat}%'
-        ORDER BY ${sortBy} ${orderBy}`,
-          (error, result) => {
-            // @ts-ignore
-            if (error) reject(new Error(error))
-            resolve(result)
-          })
+    const firstData = ((limit * activePage) - limit)
+    let getData = new Promise(async (resolve, reject) => {
+      try {
+        if (urutkan) {
+          const result = await connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id WHERE category.name_category LIKE '${urutkan}' ORDER BY ${sortBy} ${orderBy}`)
+          resolve(result.rows)
+        }
+        if (limit) {
+          const result = await connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id ORDER BY ${sortBy || 'id'} ${orderBy || 'ASC'}  LIMIT ${limit}  OFFSET ${firstData}`)
+          resolve(result.rows)
+        }
+        const result = await connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id AND products.name LIKE '%${searchName}%' AND CAST(products.id_category AS text) LIKE '%${idCat}%'
+        ORDER BY ${sortBy || 'id'} ${orderBy || 'ASC'}`)
+        resolve(result.rows)
+      } catch (error) {
+        reject(error)
       }
     })
+    return getData
   },
   posDetail: (posId) => {
-    return new Promise((resolve, reject) => {
-      connection.query('SELECT * FROM products WHERE id = ?', posId, (error, result) => {
-        // @ts-ignore
-        if (error) reject(new Error(error))
-        resolve(result)
-      })
+    let getDetail = new Promise(async (resolve, reject) => {
+      try {
+        const result = await connection.query(`SELECT * FROM products WHERE id = '${posId}'`)
+        resolve(result.rows[0])
+      } catch (error) {
+        reject(error)
+      }
     })
+    return getDetail
   },
   insertData: (data) => {
-    return new Promise((resolve, reject) => {
-      connection.query('ALTER TABLE products AUTO_INCREMENT = 1')
-      connection.query('INSERT INTO products SET ?', data)
-      connection.query(`SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id`, (error, result) => {
-        // @ts-ignore
-        if (error) reject(new Error(error))
-        resolve(result)
-      })
+    let insertData = new Promise(async (resolve, reject) => {
+      try {
+        const getData = await connection.query(`INSERT INTO products( id, name, description, image, price, stock, id_category, created_at, updated_at) VALUES ('${data.id}', '${data.name}', '${data.description}', '${data.image}', ${data.price}, ${data.stock}, ${data.id_category}, '${data.created_at}', '${data.updated_at}');`)
+        if (getData.rowCount > 0) {
+          const result = await connection.query(`SELECT products.*, category.name_category FROM products  LEFT JOIN category ON products.id_category = category.id`)
+          resolve(result.rows)
+        }
+      } catch (error) {
+        reject(error)
+      }
     })
+    return insertData
   },
-
   updateData: (data) => {
     const posId = data.id
-    console.log(data)
-    return new Promise((resolve, reject) => {
-      connection.query('UPDATE products SET ? WHERE id = ?', [data, posId], (error, result) => {
-        // @ts-ignore
-        if (error) reject(new Error(error))
+    let updateData = new Promise(async (resolve, reject) => {
+      try {
+        const result = await connection.query(`UPDATE products SET id='${data.id}', name='${data.name}', description='${data.description}', image='${data.image}', price=${data.price}, stock=${data.stock}, id_category=${data.id_category}, updated_at='${data.updated_at}' WHERE id = '${posId}'`)
         resolve(result)
-      })
+      } catch (error) {
+        reject(error)
+      }
     })
+    return updateData
   },
-
   deleteData: (posId) => {
-    return new Promise((resolve, reject) => {
+    let deleteData = new Promise((resolve, reject) => {
       connection.query('DELETE FROM products WHERE id = ?', posId)
       connection.query('SELECT products.*, category.name_category FROM products LEFT JOIN category ON products.id_category = category.id', (error, result) => {
         // @ts-ignore
@@ -77,14 +71,16 @@ module.exports = {
         resolve(result)
       })
     })
+    return deleteData
   },
   countData: () => {
-    return new Promise((resolve, reject) => {
+    let countData = new Promise((resolve, reject) => {
       connection.query(`SELECT count(products.id) as totalData FROM products`, (error, result) => {
         // @ts-ignore
         if (error) reject(new Error(error))
-        resolve(result[0].totalData)
+        resolve(result.rows[0].totaldata)
       })
     })
+    return countData
   }
 }

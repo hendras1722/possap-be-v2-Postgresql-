@@ -1,4 +1,4 @@
-const con = require("../configs/mysql");
+const con = require("../configs/pg");
 
 module.exports = {
     buy: (idBuyer, data, a, date) => {

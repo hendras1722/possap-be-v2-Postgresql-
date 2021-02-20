@@ -1,4 +1,4 @@
-const connection = require('../configs/mysql')
+const connection = require('../configs/pg')
 
 module.exports = {
     postImage: (data) => {

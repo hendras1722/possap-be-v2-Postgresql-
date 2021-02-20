@@ -62,7 +62,9 @@ module.exports = {
                     image,
                     price,
                     stock,
-                    id_category
+                    id_category,
+                    created_at: new Date().toISOString(),
+                    updated_at: new Date().toISOString()
                 }
 
                 const result = await posStyle.insertData(data)
@@ -84,7 +86,7 @@ module.exports = {
             price: request.body.price,
             stock: request.body.stock,
             id_category: request.body.id_category,
-            updated_at: new Date()
+            updated_at: new Date().toISOString()
         }
 
         const result = await posStyle.updateData(data)
@@ -103,7 +105,7 @@ module.exports = {
         const deleteData = {
             id: parseInt(posId)
         }
-        myConnection.response(response, 200, deleteData)
+        myConnection.customResponse(response, 200, deleteData)
         try {
         } catch (error) {
             myConnection.customErrorResponse(response, 404, 'Ups!!! you have problem at updateData')

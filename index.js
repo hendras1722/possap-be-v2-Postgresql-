@@ -6,6 +6,10 @@ const mainNavigation = require('./src/routes')
 const multer = require('multer')
 const { port } = require('./src/configs')
 const cors = require('cors')
+const db = require('./src/configs/pg')
+const fs = require('fs')
+const http = require('http')
+const path = require('path');
 // const redis = require('redis')
 
 // var corsOptions = {
@@ -16,7 +20,6 @@ const cors = require('cors')
 // app.get('/pos/search/', cors()rs, function (req, res, next) {
 //     res.json({ msg: 'This is CORS-enabled for only example.com' })
 // })
-
 app.listen(port, () => console.log(`This is server running ${port}`))
 app.use(cors('*'))
 // app.listen(80, function () {
@@ -40,4 +43,6 @@ app.use(bodyParser.urlencoded({
     extended: true
 }))
 
-app.use('/', mainNavigation)
+app.use('/', mainNavigation, (req, res) => {
+    res.sendFile(path.join(__dirname + '/index.html'))
+})
